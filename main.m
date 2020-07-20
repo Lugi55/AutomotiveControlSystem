@@ -34,15 +34,11 @@ T = 10;
 
 coef = PathPlanner(x0,x1,d0,d1);
 
-coef_prime = polyder(coef);
-coef_primeprime = polyder(coef_prime);
 
-
-initialState = [x0(1)+d1*cos(x0(4))+0.5;x0(2)+d1*sin(x0(4));x0(3:8)];
+initialState = [x0(1)+d1*cos(x0(4));x0(2)+d1*sin(x0(4));x0(3:8)];
 [t,state] = ode45(@myfun,[0,T],initialState,[],coef,x_start,x_end);
 
-
-i = 1
+i = 1;
 for t = 0:0.1:T
     [y_ref(i),x(i)] = loop(t,x_start,x_end,coef);
     i = i+1;
@@ -51,23 +47,16 @@ end
 plot(state(:,1)-d1*cos(state(:,4)),state(:,2)-d1*sin(state(:,4)))
 hold on 
 plot(x,y_ref)
-    
+  
 function [y_ref,x ]= loop(t,x_start,x_end,coef)
     global T
     tau = t/T;
     s = 3*tau^2-2*tau^3;
     
     x        = x_start+(x_end-x_start)*s;
-    x_dot    = 1/T*(x_end-x_start)*(6*tau-6*tau^2);
-    
     y_ref = polyval(coef,x);
-    yx = polyval(polyder(coef),x);
-    yxx = polyval(polyder(polyder(coef)),x);
-    yxxx = polyval(polyder(polyder(polyder(coef))),x);
 end
     
-
-
 function dx_dt=myfun(t,state,coef,x_start,x_end)
 
     global d1;
