@@ -1,11 +1,11 @@
-%%
+
 %Input Vektor for initial position
 x0 = zeros(8,1);
 x0(1) = 0;          %x
 x0(2) = 0;          %y
-x0(3) = 0;          %theta0
-x0(4) = 0;          %theta1
-x0(5) = 0;          %phi
+x0(3) = 0*pi/180;  %theta0
+x0(4) = 0*pi/180;  %theta1
+x0(5) = 0*pi/180;  %phi
 
 x0(6) = 1;          %xi1
 x0(7) = 0;          %xi2
@@ -14,9 +14,9 @@ x0(8) = 0;          %xi3
 x1 = zeros(8,1);
 x1(1) = 20;          %x
 x1(2) = 20;          %y
-x1(3) = 0;          %theta0
-x1(4) = 0;          %theta1
-x1(5) = 0;          %phi
+x1(3) = 0*pi/180;  %theta0
+x1(4) = 0*pi/180;   %theta1
+x1(5) = 0*pi/180;  %phi
 
 x1(6) = 0;          %xi1
 x1(7) = 0;          %xi2
@@ -28,9 +28,11 @@ x_end = x1(1);
 global d0;
 global d1;
 global T;
-d0 = 1;
+d0 = 2;
 d1 = 1;
 T = 10;
+
+
 
 coef = PathPlanner(x0,x1,d0,d1);
 
@@ -38,24 +40,32 @@ coef = PathPlanner(x0,x1,d0,d1);
 initialState = [x0(1)+d1*cos(x0(4));x0(2)+d1*sin(x0(4));x0(3:8)];
 [t,state] = ode45(@myfun,[0,T],initialState,[],coef,x_start,x_end);
 
-i = 1;
-for t = 0:0.1:T
-    [y_ref(i),x(i)] = loop(t,x_start,x_end,coef);
-    i = i+1;
+f = figure(1);
+axis equal
+
+ist = [state(:,1)-d1*cos(state(:,4));state(:,2)-d1*sin(state(:,4))];
+soll = [[x0(1):0.1:x1(1)];polyval(coef,[x0(1):0.1:x1(1)])];
+
+fig = uifigure;
+sld = uislider(fig,...
+               'Position',[100 75 120 3],...
+               'ValueChangingFcn',@(sld,event) sliderMoving(event,ist,soll,T,state,f));
+sld.Limits = [0 T];
+
+
+function sliderMoving(event,ist,soll,T,state,f)
+    clf(f)
+    plot(ist(1,:),ist(2,:))
+    plot(soll(1,:),soll(2,:))
+    i = uint32(length(state(:,1))*event.Value/T);
+    if i==0 
+        i=1; 
+    end
+    DrawTruck([state(i,1);state(i,2)],state(i,3),state(i,5))
 end
 
-plot(state(:,1)-d1*cos(state(:,4)),state(:,2)-d1*sin(state(:,4)))
-hold on 
-plot(x,y_ref)
-  
-function [y_ref,x ]= loop(t,x_start,x_end,coef)
-    global T
-    tau = t/T;
-    s = 3*tau^2-2*tau^3;
-    
-    x        = x_start+(x_end-x_start)*s;
-    y_ref = polyval(coef,x);
-end
+
+
     
 function dx_dt=myfun(t,state,coef,x_start,x_end)
 
@@ -129,4 +139,5 @@ function dx_dt=myfun(t,state,coef,x_start,x_end)
     dx_dt(7) = state(8) * eta * x_dot;
     dx_dt(8) = w_1 * eta * x_dot;
 end
+
 

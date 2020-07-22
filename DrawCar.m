@@ -8,11 +8,12 @@ y = centerLocation(2);
 x_shift = x-x;
 y_shift = y-y;
 
-d0 = 2;
-radius = d0./tan(phi);
+global L;
+L =2;
+radius = L./tan(phi);
 
-phi_VL = atan(d0/(radius-0.5));
-phi_VR = atan(d0/(radius+0.5));
+phi_VL = atan(L/(radius-0.5));
+phi_VR = atan(L/(radius+0.5));
 
 
 R = [cos(theta), -sin(theta);
@@ -63,7 +64,7 @@ line(x_rcoord+x,y_rcoord+y)
 R_phi = [cos(phi_VL), -sin(phi_VL);
         sin(phi_VL),  cos(phi_VL)];
 
-x_shift = x-x-d0;
+x_shift = x-x-L;
 y_shift = y-y-0.5;
 x_coord = [x_shift+1.8,x_shift+2.2,x_shift+2.2,x_shift+1.8,x_shift+1.8];
 y_coord = [y_shift+0.45, y_shift+0.45, y_shift+0.55, y_shift+0.55, y_shift+0.45];
@@ -74,7 +75,7 @@ for n=1:length(x_coord)
     y_rcoord(n) = R_phi(2,1)*x_coord(n)+R_phi(2,2)*y_coord(n);
 end
 
-x_rcoord = x_rcoord+d0;
+x_rcoord = x_rcoord+L;
 y_rcoord = y_rcoord+0.5;
 
 x_rrcoord = zeros(length(x_coord));
@@ -92,7 +93,7 @@ line(x_rrcoord+x,y_rrcoord+y)
 R_phi = [cos(phi_VR), -sin(phi_VR);
         sin(phi_VR),  cos(phi_VR)];
     
-x_shift = x-x-d0;
+x_shift = x-x-L;
 y_shift = y-y+0.5;
 x_coord = [x_shift+1.8,x_shift+2.2,x_shift+2.2,x_shift+1.8,x_shift+1.8];
 y_coord = [y_shift-0.45, y_shift-0.45, y_shift-0.55, y_shift-0.55, y_shift-0.45];
@@ -103,7 +104,7 @@ for n=1:length(x_coord)
     y_rcoord(n) = R_phi(2,1)*x_coord(n)+R_phi(2,2)*y_coord(n);
 end
 
-x_rcoord = x_rcoord+d0;
+x_rcoord = x_rcoord+L;
 y_rcoord = y_rcoord-0.5;
 
 x_rrcoord = zeros(length(x_coord));
