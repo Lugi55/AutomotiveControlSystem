@@ -1,4 +1,4 @@
-function DrawCar(centerLocation,theta,phi)
+function DrawTruck(centerLocation,theta,phi)
 
 %%
 %Setup
@@ -8,7 +8,7 @@ y = centerLocation(2);
 x_shift = x-x;
 y_shift = y-y;
 
-d0 = 2;
+global d0;
 radius = d0./tan(phi);
 
 phi_VL = atan(d0/(radius-0.5));
