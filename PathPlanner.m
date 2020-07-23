@@ -12,8 +12,8 @@ function [coef] = PathPlanner(state_x0, state_x1, d0, d1)
 
 a0 = state_x0(2);
 a1 = yx_0;
-a2 = yxx_0;
-a3 = yxxx_0;
+a2 = yxx_0/2;
+a3 = yxxx_0/6;
 
 x1 = state_x1(1);
 A = [x1^7      x1^6       x1^5       x1^4;

@@ -16,9 +16,9 @@ T = 10;
 x0 = zeros(8,1);
 x0(1) = 0;          %x
 x0(2) = 0;          %y
-x0(3) = 0*pi/180;  %theta0
-x0(4) = 0*pi/180;  %theta1
-x0(5) = 0*pi/180;  %phi
+x0(3) = 0;  %theta0
+x0(4) = 0;  %theta1
+x0(5) = 0;  %phi
 
 x0(6) = 1;          %xi1
 x0(7) = 0;          %xi2
@@ -27,9 +27,9 @@ x0(8) = 0;          %xi3
 x1 = zeros(8,1);
 x1(1) = 20;          %x
 x1(2) = 20;          %y
-x1(3) = 0*pi/180;  %theta0
-x1(4) = 0*pi/180;   %theta1
-x1(5) = 0*pi/180;  %phi
+x1(3) = -0.3;  %theta0
+x1(4) = -0.3;   %theta1
+x1(5) = -0.3;  %phi
 
 x1(6) = 0;          %xi1
 x1(7) = 0;          %xi2
@@ -161,10 +161,11 @@ function Recalculate()
     global t
     global state
     
+    opts = odeset('RelTol',1e-12);
 
     coef = PathPlanner(x0,x1,d0,d1);
     initialState = [x0(1)+d1*cos(x0(4))+offset(1);x0(2)+d1*sin(x0(4))+offset(2);x0(3)+offset(3);x0(4)+offset(4);x0(5)+offset(5);x0(6:8)];
-    [t,state] = ode45(@myfun,[0,T],initialState,[],coef,x0(1),x1(1));
+    [t,state] = ode45(@myfun,[0,T],initialState,opts,coef,x0(1),x1(1));
     ist = [state(:,1)-d1*cos(state(:,4)) , state(:,2)-d1*sin(state(:,4))]';
     soll = [[x0(1):0.1:x1(1)] ; polyval(coef,[x0(1):0.1:x1(1)])];
 end
